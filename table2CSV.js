@@ -24,7 +24,7 @@ jQuery.fn.table2CSV = function(options) {
         }
     } else {
         $(el).filter(':visible').find(options.headerSelector).each(function() {
-            if ($(this).css('display') != 'none') tmpRow[tmpRow.length] = formatData($(this).html());
+            if ( ($(this).css('display') != 'none' && !$(this).hasClass('nocsv')) || $(this).hasClass('onlycsv') ) tmpRow[tmpRow.length] = formatData($(this).html());
         });
     }
 
@@ -34,7 +34,7 @@ jQuery.fn.table2CSV = function(options) {
     $(el).find('tr').each(function() {
         var tmpRow = [];
         $(this).filter(':visible').find(options.columnSelector).each(function() {
-            if ($(this).css('display') != 'none') tmpRow[tmpRow.length] = formatData($(this).html());
+            if ($(this).css('display') != 'none' && !$(this).hasClass('nocsv')) tmpRow[tmpRow.length] = formatData($(this).html());
         });
         row2CSV(tmpRow);
     });
@@ -79,6 +79,10 @@ jQuery.fn.table2CSV = function(options) {
         }
     }
     function formatData(input) {
+        
+        var regexp = new RegExp(/<nocsv>(.*?)<\/nocsv>/);
+        var output = input.replace(regexp, '');
+        
         // replace " with “
         var regexp = new RegExp(/["]/g);
         var output = input.replace(regexp, "“");
